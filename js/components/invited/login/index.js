@@ -1,36 +1,53 @@
 import React, { Component } from 'react';
-import { Image, View, StatusBar } from 'react-native';
+import { Image, StatusBar, WebView, View, Modal, TouchableHighlight } from 'react-native';
 import { connect } from 'react-redux';
-import { Container, Button, H3, Text } from 'native-base';
+import { Content, Form, Button, Text, Header, Body, Title, Right } from 'native-base';
 
-import { openDrawer } from '../../../actions/drawer';
 import styles from './styles';
 
 class LoginComponent extends Component { // eslint-disable-line
+ 	 
+    constructor(){
+      super();
+      this.state = { 
+        modalVisible: false
+      }
+    }
 
-  static propTypes = {
-    openDrawer: React.PropTypes.func
-  }
+    setModalVisible(visible) {
+      this.setState({modalVisible: visible});
+    }
 
-  render() {
-  	const probando = false;
-    return ( 
-      <Container>
-            <Button
-              style={{ backgroundColor: '#6FAF98', alignSelf: 'center' }}
-              onPress={this.props.openDrawer}
+    render() {
+    	let webview = this.state.webview;
+
+      return ( 
+          <View>
+            <Modal
+            animationType={"slide"}
+            transparent={false}
+            visible={this.state.modalVisible}
+            onRequestClose={() => {this.setModalVisible(false)}}
             >
-              <Text>{probando ? 'Funciono' : 'B'}</Text>
-            </Button>
-      </Container> 
-    );
-  }
-}
+           <WebView
+              source={{uri: 'http://chaira.udla.edu.co/api/v0.1/oauth2/authorize.asmx/auth?response_type=code&client_id=800167840216&redirect_uri=http://localhost/callback&state=x'}}
+            />
+          </Modal>
 
-function bindActions(dispatch) {
-  return {
-    openDrawer: () => dispatch(openDrawer()),
-  };
+  			  <Header>
+            <Body>
+              <Title>¡Hola!</Title>
+            </Body>
+            <Right />
+          </Header>
+          <Button block style={ styles.text } onPress={() => {
+            this.setModalVisible(true)
+          }}>
+              <Text>Iniciar sesión con Chairá</Text>
+          </Button>
+  	    </View>
+      );
+    }
 }
 
 const mapStateToProps = state => ({
@@ -39,4 +56,4 @@ const mapStateToProps = state => ({
   routes: state.drawer.routes,
 });
   
-export default connect(mapStateToProps, bindActions)(LoginComponent);
+export default connect(mapStateToProps)(LoginComponent);
