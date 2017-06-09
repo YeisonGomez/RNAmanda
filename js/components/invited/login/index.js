@@ -7,6 +7,9 @@ import styles from './styles';
 
 class LoginComponent extends Component { // eslint-disable-line
  	 
+    client_id = "800167840216";
+    redirect_uri = "http://localhost/callback";
+
     constructor(){
       super();
       this.state = { 
@@ -18,8 +21,28 @@ class LoginComponent extends Component { // eslint-disable-line
       this.setState({modalVisible: visible});
     }
 
+    callbackAPI(code){
+      console.log(code);
+      alert(code);
+    }
+
+    onNavigationStateChange(e){
+      if(e.url.indexOf("http://localhost/callback") != -1 && e.url.indexOf("http://chaira.udla.edu.co") == -1){
+        let code = "";
+        let vars = e.url.split("?")[1].split("&");
+        for (let i = 0; i < vars.length; i++) {
+          let pair = vars[i].split("=");
+          if (pair[0] == "code") {
+            code = pair[1];
+          }
+        }
+        this.setModalVisible(false); 
+        this.callbackAPI(code);
+      }
+    }
+
     render() {
-    	let webview = this.state.webview;
+    	let webview = this.state.webview; 
 
       return ( 
           <View>
@@ -30,7 +53,10 @@ class LoginComponent extends Component { // eslint-disable-line
             onRequestClose={() => {this.setModalVisible(false)}}
             >
            <WebView
-              source={{uri: 'http://chaira.udla.edu.co/api/v0.1/oauth2/authorize.asmx/auth?response_type=code&client_id=800167840216&redirect_uri=http://localhost/callback&state=x'}}
+              onNavigationStateChange={this.onNavigationStateChange}
+              setModalVisible={this.setModalVisible.bind(this)}
+              callbackAPI={this.callbackAPI.bind(this)}
+              source={{uri: 'http://chaira.udla.edu.co/api/v0.1/oauth2/authorize.asmx/auth?response_type=code&client_id=' + this.client_id + '&redirect_uri=' + this.redirect_uri + '&state=x'}}
             />
           </Modal>
 
