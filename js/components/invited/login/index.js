@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, StatusBar, WebView, View, Modal, TouchableHighlight } from 'react-native';
+import { Image, StatusBar, WebView, View, Modal, TouchableHighlight, AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
 import { Content, Form, Button, Text, Header, Body, Title, Right, Toast } from 'native-base';
 
@@ -8,15 +8,39 @@ import OauthService from '../../../services/chaira_api';
 import Util from '../../../providers/util';
 
 class LoginComponent extends Component { // eslint-disable-line
- 	 
+ 	  
+
     constructor(){
       super();
       this.state = { 
-        modalVisible: false
+        modalVisible: false,
+        text: ""
+      }
+      this.setText();
+      this.getText();
+    }
+
+    async getText(){
+      try {
+        this.setState({text: await AsyncStorage.getItem('@MySuperStore:key')}); 
+        if (this.state.text !== null){
+          // We have data!!
+          console.log(this.state.text);
+        }
+      } catch (error) {
+        // Error retrieving data
       }
     }
- 
-    setModalVisible(visible) { 
+   
+    async setText(){
+      try {
+        await AsyncStorage.setItem('@MySuperStore:key', 'I like to save it.');
+      } catch (error) {
+        // Error saving data
+      }
+    }
+
+    setModalVisible(visible) {  
       this.setState({modalVisible: visible}); 
     }
 
@@ -29,8 +53,8 @@ class LoginComponent extends Component { // eslint-disable-line
         }
       })
     }
-
-    onNavigationStateChange(e){
+ 
+    onNavigationStateChange(e){ 
       if(e.url.indexOf(this.redirect_uri) != -1 && e.url.indexOf("http://chaira.udla.edu.co") == -1){
         let code = "";
         let vars = e.url.split("?")[1].split("&");
@@ -47,7 +71,7 @@ class LoginComponent extends Component { // eslint-disable-line
 
     render() {
     	let webview = this.state.webview; 
-
+ 
       return ( 
           <View>
             <Modal
@@ -67,7 +91,7 @@ class LoginComponent extends Component { // eslint-disable-line
 
   			  <Header>
             <Body>
-              <Title>¡Hola!</Title>
+              <Title>{this.state.text}!</Title>
             </Body>
             <Right />
           </Header>

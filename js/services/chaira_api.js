@@ -8,7 +8,7 @@ class OauthService {
 	client_secret = "r3wd4q0x12gl4wowln6759vpl7gejy";
 
 	getAccessToken(code){
-		return ApiService.POST('/oauth2/authorize.asmx/tken', { 
+		return ApiService.POST('/oauth2/authorize.asmx/token', { 
 			grant_type: "authorization_code",
 			code: code,
 			redirect_uri: this.redirect_uri,

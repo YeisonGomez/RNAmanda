@@ -2,14 +2,19 @@ import { Toast } from 'native-base';
 
 class Util {
 
+    dev = false;
+
     notification(message, type) {
-        Toast.show({
-            supportedOrientations: ['potrait', 'landscape'],
-            text: message,
-            position: 'bottom',
-            type: ((type)? type : ''),
-            duration: 3000
-        })
+        if (dev) {
+            Toast.show({
+                supportedOrientations: ['potrait', 'landscape'],
+                text: message,
+                position: 'bottom',
+                buttonText: ' ',
+                type: ((type) ? type : ''),
+                duration: 3000
+            })
+        }
     }
 }
 
