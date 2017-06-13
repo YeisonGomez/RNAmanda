@@ -1,33 +1,37 @@
 import React, { Component } from 'react';
 import { Image, StatusBar, WebView, View, Modal, TouchableHighlight } from 'react-native';
 import { connect } from 'react-redux';
-import { Content, Form, Button, Text, Header, Body, Title, Right } from 'native-base';
+import { Content, Form, Button, Text, Header, Body, Title, Right, Toast } from 'native-base';
 
 import styles from './styles';
+import OauthService from '../../../services/chaira_api'; 
+import Util from '../../../providers/util';
 
 class LoginComponent extends Component { // eslint-disable-line
  	 
-    client_id = "800167840216";
-    redirect_uri = "http://localhost/callback";
-
     constructor(){
       super();
       this.state = { 
         modalVisible: false
       }
     }
-
-    setModalVisible(visible) {
-      this.setState({modalVisible: visible});
+ 
+    setModalVisible(visible) { 
+      this.setState({modalVisible: visible}); 
     }
 
     callbackAPI(code){
-      console.log(code);
-      alert(code);
+      OauthService.getAccessToken(code).then(data => {
+        if(data && data.state != 'error'){
+          console.log(data);
+        } else {
+          Util.notification(data.description, 'danger');
+        }
+      })
     }
 
     onNavigationStateChange(e){
-      if(e.url.indexOf("http://localhost/callback") != -1 && e.url.indexOf("http://chaira.udla.edu.co") == -1){
+      if(e.url.indexOf(this.redirect_uri) != -1 && e.url.indexOf("http://chaira.udla.edu.co") == -1){
         let code = "";
         let vars = e.url.split("?")[1].split("&");
         for (let i = 0; i < vars.length; i++) {
@@ -56,7 +60,8 @@ class LoginComponent extends Component { // eslint-disable-line
               onNavigationStateChange={this.onNavigationStateChange}
               setModalVisible={this.setModalVisible.bind(this)}
               callbackAPI={this.callbackAPI.bind(this)}
-              source={{uri: 'http://chaira.udla.edu.co/api/v0.1/oauth2/authorize.asmx/auth?response_type=code&client_id=' + this.client_id + '&redirect_uri=' + this.redirect_uri + '&state=x'}}
+              redirect_uri={OauthService.redirect_uri}
+              source={{uri: OauthService.chaira_api + '/oauth2/authorize.asmx/auth?response_type=code&client_id=' + OauthService.client_id + '&redirect_uri=' + OauthService.redirect_uri + '&state=x'}}
             />
           </Modal>
 

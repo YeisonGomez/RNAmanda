@@ -12,16 +12,7 @@ const launchscreenLogo = require('../../../img/logo-kitchen-sink.png');
 
 class InvitedComponent extends Component { // eslint-disable-line
 
-  static propTypes = {
-    openDrawer: React.PropTypes.func,
-  }
-
   render() {
-  	let probando = false; 
-  	let button = () => {
-  		console.log(probando); 
-  		probando = true;
-  	}
     return ( 
       <Container> 
         <StatusBar barStyle='light-content'/>
@@ -31,16 +22,10 @@ class InvitedComponent extends Component { // eslint-disable-line
   }
 }
 
-function bindActions(dispatch) {
-  return {
-    openDrawer: () => dispatch(openDrawer()),
-  };
-}
-
 const mapStateToProps = state => ({
   navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
   routes: state.drawer.routes,
 });
 
-export default connect(mapStateToProps, bindActions)(InvitedComponent);
+export default connect(mapStateToProps)(InvitedComponent);
