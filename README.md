@@ -1,11 +1,5 @@
-# NativeBase KitchenSink v2.0
+# Amanda v2.0
 An example app with all the UI components of NativeBase
-
-## Demo
-
-iOS | Android
- :--:| :-----:
- ![ios-demo](./screenshots/iOS.gif) | ![android-demo](./screenshots/Android.gif)
 
 
 [NativeBase](http://nativebase.io/) is a free and open source framework that enables developers to build high-quality apps using [React Native](https://facebook.github.io/react-native/) for iOS and Android with a fusion of ES6. NativeBase builds a layer on top of React Native that provides you with basic set of components for mobile application development. This helps you to build world-class application experiences on native platforms.
@@ -22,9 +16,9 @@ The applications stack of components is built using native UI components, so the
 On the command prompt run the following commands
 
 ```sh
-$ git clone git@github.com:GeekyAnts/NativeBase-KitchenSink.git
+$ git clone https://github.com/YeisonGomez/RNAmanda.git
 
-$ cd NativeBase-KitchenSink/
+$ cd RNAmanda/
 
 $ npm install
 
@@ -69,6 +63,3 @@ $ react-native run-android
 *	[NativeBase Documentation](http://nativebase.io/documentation)
 *	[NativeBase on Twitter](https://twitter.com/NativeBaseIO)
 *	[NativeBase Blog](https://medium.com/nativebase-io-blog)
-
-
-For apps with more advanced designs using NativeBase, please visit **[StrapMobile](https://strapmobile.com/)**.
