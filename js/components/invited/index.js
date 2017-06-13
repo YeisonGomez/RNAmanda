@@ -12,18 +12,6 @@ const launchscreenLogo = require('../../../img/logo-kitchen-sink.png');
 
 class InvitedComponent extends Component { // eslint-disable-line
 
-  constructor(){
-    super();
-    setTimeout(async function(){
-      try {
-        await AsyncStorage.setItem('@MySuperStore:key', 'Cambiado');
-        console.log(await AsyncStorage.getItem('@MySuperStore:key'));
-      } catch (error) {
-        // Error saving data
-      }
-    }, 2000);
-  }
-
   render() {
     return ( 
       <Container> 

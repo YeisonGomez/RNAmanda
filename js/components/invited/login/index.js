@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { Image, StatusBar, WebView, View, Modal, TouchableHighlight, AsyncStorage } from 'react-native';
+import { Image, StatusBar, WebView, View, Modal, TouchableHighlight } from 'react-native';
 import { connect } from 'react-redux';
 import { Content, Form, Button, Text, Header, Body, Title, Right, Toast } from 'native-base';
 
 import styles from './styles';
 import OauthService from '../../../services/chaira_api'; 
 import Util from '../../../providers/util';
+import User from '../../../providers/user.storage';
+import Oauth from '../../../providers/auth.storage';
 
 class LoginComponent extends Component { // eslint-disable-line
  	  
@@ -13,31 +15,16 @@ class LoginComponent extends Component { // eslint-disable-line
     constructor(){
       super();
       this.state = { 
-        modalVisible: false,
-        text: ""
+        modalVisible: false
       }
-      this.setText();
-      this.getText();
-    }
+ 
+      User.getUser().then(data => {
+        console.log(data);
+      });
 
-    async getText(){
-      try {
-        this.setState({text: await AsyncStorage.getItem('@MySuperStore:key')}); 
-        if (this.state.text !== null){
-          // We have data!!
-          console.log(this.state.text);
-        }
-      } catch (error) {
-        // Error retrieving data
-      }
-    }
-   
-    async setText(){
-      try {
-        await AsyncStorage.setItem('@MySuperStore:key', 'I like to save it.');
-      } catch (error) {
-        // Error saving data
-      }
+      Oauth.getAuth().then(data => {
+        console.log(data);
+      });
     }
 
     setModalVisible(visible) {  
@@ -48,6 +35,8 @@ class LoginComponent extends Component { // eslint-disable-line
       OauthService.getAccessToken(code).then(data => {
         if(data && data.state != 'error'){
           console.log(data);
+          User.setUser(data.scope);
+          Oauth.setAuth(data);
         } else {
           Util.notification(data.description, 'danger');
         }
@@ -91,7 +80,7 @@ class LoginComponent extends Component { // eslint-disable-line
 
   			  <Header>
             <Body>
-              <Title>{this.state.text}!</Title>
+              <Title>Hola!</Title>
             </Body>
             <Right />
           </Header>
