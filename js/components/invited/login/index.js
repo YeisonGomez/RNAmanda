@@ -10,21 +10,12 @@ import User from '../../../providers/user.storage';
 import Oauth from '../../../providers/auth.storage';
 
 class LoginComponent extends Component { // eslint-disable-line
- 	  
 
     constructor(){
       super();
       this.state = { 
         modalVisible: false
       }
- 
-      User.getUser().then(data => {
-        console.log(data);
-      });
-
-      Oauth.getAuth().then(data => {
-        console.log(data);
-      });
     }
 
     setModalVisible(visible) {  
@@ -34,7 +25,6 @@ class LoginComponent extends Component { // eslint-disable-line
     callbackAPI(code){
       OauthService.getAccessToken(code).then(data => {
         if(data && data.state != 'error'){
-          console.log(data);
           User.setUser(data.scope);
           Oauth.setAuth(data);
         } else {

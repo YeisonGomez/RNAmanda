@@ -27,6 +27,19 @@ class Oauth {
             return null;
         }
     }
+
+    async isAuth(){
+        try {
+            let access_token = await AsyncStorage.getItem(this.db_id + 'access_token');
+            return access_token != null;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    async clearAll(){
+        await AsyncStorage.clear();
+    }
 }
 
 export default (new Oauth);

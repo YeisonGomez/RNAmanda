@@ -7,10 +7,14 @@ import { openDrawer } from '../../actions/drawer';
 import LoginComponent from './login';
 import styles from './styles';
 
-const launchscreenBg = require('../../../img/launchscreen-bg.png');
-const launchscreenLogo = require('../../../img/logo-kitchen-sink.png');
+import Oauth from '../../providers/auth.storage';
 
 class InvitedComponent extends Component { // eslint-disable-line
+
+  constructor(){
+    super();
+    console.log(this);
+  }
 
   render() {
     return ( 

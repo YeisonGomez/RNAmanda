@@ -31,7 +31,13 @@ class User {
 
     async setUser(data) {
         //console.log(data);
+        let data_clear = JSON.parse(data);
         data = JSON.parse(data)[0];
+
+        for (var i = 1; i < data_clear.length; ++i) {
+            data.ROL += "," + data_clear[i].ROL;
+        }
+
         try {
             await AsyncStorage.setItem(this.db_id + 'NOMBRES', data.NOMBRES);
             await AsyncStorage.setItem(this.db_id + 'APELLIDOS', data.APELLIDOS);

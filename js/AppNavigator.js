@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { BackAndroid, StatusBar, NavigationExperimental, Platform } from 'react-native';
 import { connect } from 'react-redux';
-import { StyleProvider, variables, Drawer, Container } from 'native-base';
+import { StyleProvider, variables, Drawer, Container, Content } from 'native-base';
 import { actions } from 'react-native-navigation-redux-helpers';
 import { Router, Scene } from 'react-native-router-flux';
 
@@ -10,9 +10,10 @@ import getTheme from '../native-base-theme/components';
 import material from '../native-base-theme/variables/material';
 import { closeDrawer } from './actions/drawer';
 
+import Spinner from 'react-native-loading-spinner-overlay';
+
 import InvitedComponent from './components/invited/';
 import LoginComponent from './components/invited/login/';
-import Home from './components/home/';
 import Header from './components/Header/';
 import Header1 from './components/Header/1';
 import Header2 from './components/Header/2';
@@ -100,6 +101,8 @@ import AdvSegment from './components/segment/segmentTab';
 import Toast from './components/toast';
 import statusBarColor from './themes/variables';
 
+import Oauth from './providers/auth.storage';
+
 const {
   popRoute,
 } = actions;
@@ -121,6 +124,23 @@ class AppNavigator extends Component {
       key: React.PropTypes.string,
       routes: React.PropTypes.array,
     }),
+  }
+
+  constructor(){
+    super();
+
+    this.state = { 
+      module: null,
+    }
+
+    Oauth.clearAll();
+    Oauth.isAuth().then(data => {
+      if(data){
+        this.setState({module: 'app'}); 
+      } else { 
+         this.setState({module: 'invited'}); 
+      }
+    });
   }
 
   componentDidMount() {
@@ -161,23 +181,28 @@ class AppNavigator extends Component {
   }
 
   render() {
-    if(true){
+    if(this.state.module == null){ 
+      return (<Spinner visible={true} />);
+
+    } else if(this.state.module == 'invited'){
       return(
         <Container>
           <StatusBar
               hidden={(this.props.drawerState === 'opened' && Platform.OS === 'ios') ? true : false}
               backgroundColor={statusBarColor.statusBarColor}
             />
+
           <RouterWithRedux>
                 <Scene key="root1">
-                  <Scene key="invited" component={InvitedComponent} hideNavBar initial={true} />
+                  <Scene key="invited" component={InvitedComponent} hideNavBar initial={true} hola="hola"/>
                   <Scene key="login" component={LoginComponent} />
                 </Scene>
           </RouterWithRedux>
         </Container>
       );
     } else {
-    return (
+
+      return (
         <StyleProvider style={getTheme((this.props.themeState === 'material') ? material : undefined)}>
           <Drawer
             ref={(ref) => { this._drawer = ref; }}
@@ -191,7 +216,7 @@ class AppNavigator extends Component {
             />
             <RouterWithRedux>
               <Scene key="root">
-                <Scene key="home" component={Home} hideNavBar initial={true} />
+                <Scene key="anatomy" component={Anatomy} hideNavBar initial={true} />
                 <Scene key="header" component={Header} />
                 <Scene key="header1" component={Header1} />
                 <Scene key="header2" component={Header2} />
@@ -201,7 +226,6 @@ class AppNavigator extends Component {
                 <Scene key="header6" component={Header6} />
                 <Scene key="header7" component={Header7} />
                 <Scene key="header8" component={Header8} />
-                <Scene key="anatomy" component={Anatomy} />
                 <Scene key="footer" component={Footer} />
                 <Scene key="basicFooter" component={BasicFooter} />
                 <Scene key="iconFooter" component={IconFooter} />
@@ -293,6 +317,7 @@ const mapStateToProps = state => ({
   drawerState: state.drawer.drawerState,
   themeState: state.drawer.themeState,
   navigation: state.cardNavigation,
+  hola: "Hola!"
 });
 
 export default connect(mapStateToProps, bindAction)(AppNavigator);
