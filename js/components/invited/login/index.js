@@ -11,8 +11,8 @@ import Oauth from '../../../providers/auth.storage';
 
 class LoginComponent extends Component { // eslint-disable-line
 
-    constructor(){
-      super();
+    constructor(props){
+      super(props);
       this.state = { 
         modalVisible: false
       }
@@ -27,6 +27,7 @@ class LoginComponent extends Component { // eslint-disable-line
         if(data && data.state != 'error'){
           User.setUser(data.scope);
           Oauth.setAuth(data);
+          this.props.indexState({ loading: false, module: 'app' });
         } else {
           Util.notification(data.description, 'danger');
         }
@@ -35,6 +36,7 @@ class LoginComponent extends Component { // eslint-disable-line
  
     onNavigationStateChange(e){ 
       if(e.url.indexOf(this.redirect_uri) != -1 && e.url.indexOf("http://chaira.udla.edu.co") == -1){
+        this.indexState({ loading: true });
         let code = "";
         let vars = e.url.split("?")[1].split("&");
         for (let i = 0; i < vars.length; i++) {
@@ -62,21 +64,14 @@ class LoginComponent extends Component { // eslint-disable-line
            <WebView
               onNavigationStateChange={this.onNavigationStateChange}
               setModalVisible={this.setModalVisible.bind(this)}
+              indexState={this.props.indexState.bind(this)}
               callbackAPI={this.callbackAPI.bind(this)}
               redirect_uri={OauthService.redirect_uri}
               source={{uri: OauthService.chaira_api + '/oauth2/authorize.asmx/auth?response_type=code&client_id=' + OauthService.client_id + '&redirect_uri=' + OauthService.redirect_uri + '&state=x'}}
             />
           </Modal>
 
-  			  <Header>
-            <Body>
-              <Title>Hola!</Title>
-            </Body>
-            <Right />
-          </Header>
-          <Button block style={ styles.text } onPress={() => {
-            this.setModalVisible(true)
-          }}>
+          <Button block style={ styles.text } onPress={() => { this.setModalVisible(true) }}>
               <Text>Iniciar sesión con Chairá</Text>
           </Button>
   	    </View>

@@ -2,9 +2,9 @@
 import React, { Component } from 'react';
 import { BackAndroid, StatusBar, NavigationExperimental, Platform } from 'react-native';
 import { connect } from 'react-redux';
-import { StyleProvider, variables, Drawer, Container, Content } from 'native-base';
+import { StyleProvider, variables, Drawer, Container, Content, Header, Body, Title, Right } from 'native-base';
 import { actions } from 'react-native-navigation-redux-helpers';
-import { Router, Scene } from 'react-native-router-flux';
+import { Router, Scene, Actions } from 'react-native-router-flux';
 
 import getTheme from '../native-base-theme/components';
 import material from '../native-base-theme/variables/material';
@@ -14,7 +14,6 @@ import Spinner from 'react-native-loading-spinner-overlay';
 
 import InvitedComponent from './components/invited/';
 import LoginComponent from './components/invited/login/';
-import Header from './components/Header/';
 import Header1 from './components/Header/1';
 import Header2 from './components/Header/2';
 import Header3 from './components/Header/3';
@@ -129,18 +128,26 @@ class AppNavigator extends Component {
   constructor(){
     super();
 
+    this.setStateContext = this.setStateContext.bind(this); 
+
     this.state = { 
       module: null,
+      loading: false
     }
 
     Oauth.clearAll();
     Oauth.isAuth().then(data => {
-      if(data){
-        this.setState({module: 'app'}); 
-      } else { 
-         this.setState({module: 'invited'}); 
-      }
+      let nav = (data)? 'app': 'invited';
+      this.setState({module: nav}); 
+      //Actions[nav]();
     });
+  }
+
+  setStateContext(params){
+    this.setState({
+      module: (params.module)? params.module: this.state.module,
+      loading: (params.loading)? params.loading: this.state.loading
+    })
   }
 
   componentDidMount() {
@@ -162,7 +169,7 @@ class AppNavigator extends Component {
     }
 
     if (this.props.drawerState === 'closed') {
-      this._drawer._root.close();
+      //this._drawer._root.close();
     }
   }
 
@@ -192,10 +199,18 @@ class AppNavigator extends Component {
               backgroundColor={statusBarColor.statusBarColor}
             />
 
+          <Spinner visible={this.state.loading} />
+
+          <Header>
+            <Body>
+              <Title>Hola!</Title>
+            </Body>
+            <Right />
+          </Header>
+
           <RouterWithRedux>
                 <Scene key="root1">
-                  <Scene key="invited" component={InvitedComponent} hideNavBar initial={true} hola="hola"/>
-                  <Scene key="login" component={LoginComponent} />
+                  <Scene key="login" component={LoginComponent} hideNavBar initial={true} indexState={this.setStateContext}/>
                 </Scene>
           </RouterWithRedux>
         </Container>
@@ -214,10 +229,10 @@ class AppNavigator extends Component {
               hidden={(this.props.drawerState === 'opened' && Platform.OS === 'ios') ? true : false}
               backgroundColor={statusBarColor.statusBarColor}
             />
+            <Spinner visible={this.state.loading} />
             <RouterWithRedux>
               <Scene key="root">
                 <Scene key="anatomy" component={Anatomy} hideNavBar initial={true} />
-                <Scene key="header" component={Header} />
                 <Scene key="header1" component={Header1} />
                 <Scene key="header2" component={Header2} />
                 <Scene key="header3" component={Header3} />
@@ -317,7 +332,6 @@ const mapStateToProps = state => ({
   drawerState: state.drawer.drawerState,
   themeState: state.drawer.themeState,
   navigation: state.cardNavigation,
-  hola: "Hola!"
 });
 
 export default connect(mapStateToProps, bindAction)(AppNavigator);
