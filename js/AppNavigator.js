@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { BackAndroid, StatusBar, NavigationExperimental, Platform } from 'react-native';
 import { connect } from 'react-redux';
-import { StyleProvider, variables, Drawer, Container, Content, Header, Body, Title, Right } from 'native-base';
+import { StyleProvider, variables, Drawer, Container, Content, Header, Body, Title, Right, Left, Icon, Button } from 'native-base';
 import { actions } from 'react-native-navigation-redux-helpers';
 import { Router, Scene, Actions } from 'react-native-router-flux';
 
@@ -14,15 +14,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 
 import InvitedComponent from './components/invited/';
 import LoginComponent from './components/invited/login/';
-import Header1 from './components/Header/1';
-import Header2 from './components/Header/2';
-import Header3 from './components/Header/3';
-import Header4 from './components/Header/4';
-import Header5 from './components/Header/5';
-import Header6 from './components/Header/6';
-import Header7 from './components/Header/7';
-import Header8 from './components/Header/8';
-import Anatomy from './components/anatomy/';
+import Activitys from './components/activitys/';
 import Footer from './components/footer/';
 import BasicFooter from './components/footer/basicFooter';
 import IconFooter from './components/footer/iconFooter';
@@ -100,7 +92,7 @@ import AdvSegment from './components/segment/segmentTab';
 import Toast from './components/toast';
 import statusBarColor from './themes/variables';
 
-import Oauth from './providers/auth.storage';
+import OauthStorage from './storages/auth.storage';
 
 const {
   popRoute,
@@ -132,11 +124,12 @@ class AppNavigator extends Component {
 
     this.state = { 
       module: null,
-      loading: false
+      loading: false,
+      headerApp: { show: true, title: '' }
     }
 
-    Oauth.clearAll();
-    Oauth.isAuth().then(data => {
+    OauthStorage.clearAll();
+    OauthStorage.isAuth().then(data => {
       let nav = (data)? 'app': 'invited';
       this.setState({module: nav}); 
       //Actions[nav]();
@@ -146,8 +139,11 @@ class AppNavigator extends Component {
   setStateContext(params){
     this.setState({
       module: (params.module)? params.module: this.state.module,
-      loading: (params.loading)? params.loading: this.state.loading
-    })
+      loading: (params.loading != undefined)? params.loading: this.state.loading,
+      headerApp: { 
+        show: (params.headerApp && params.headerApp.show != undefined)? params.headerApp.show: this.state.headerApp.show, 
+        title: (params.headerApp && params.headerApp.title)? params.headerApp.title: this.state.headerApp.title }
+    });
   }
 
   componentDidMount() {
@@ -164,12 +160,12 @@ class AppNavigator extends Component {
   }
 
   componentDidUpdate() {
-    if (this.props.drawerState === 'opened') {
+    if (this.props.drawerState === 'opened' && this.state.module == 'app') {
       this.openDrawer();
     }
 
-    if (this.props.drawerState === 'closed') {
-      //this._drawer._root.close();
+    if (this.props.drawerState === 'closed' && this.state.module == 'app') {
+      this._drawer._root.close();
     }
   }
 
@@ -189,17 +185,26 @@ class AppNavigator extends Component {
 
   render() {
     if(this.state.module == null){ 
-      return (<Spinner visible={true} />);
-
+      return this.renderPreview();
     } else if(this.state.module == 'invited'){
-      return(
+      return this.renderInvited();
+    } else {
+      return this.renderApp();
+    }
+  }
+
+  renderPreview() {
+    return (<Spinner visible={true} />);
+  }
+
+  renderInvited(){
+    return(
         <Container>
           <StatusBar
               hidden={(this.props.drawerState === 'opened' && Platform.OS === 'ios') ? true : false}
               backgroundColor={statusBarColor.statusBarColor}
             />
 
-          <Spinner visible={this.state.loading} />
 
           <Header>
             <Body>
@@ -215,9 +220,10 @@ class AppNavigator extends Component {
           </RouterWithRedux>
         </Container>
       );
-    } else {
+  }
 
-      return (
+  renderApp(){
+    return (
         <StyleProvider style={getTheme((this.props.themeState === 'material') ? material : undefined)}>
           <Drawer
             ref={(ref) => { this._drawer = ref; }}
@@ -229,18 +235,23 @@ class AppNavigator extends Component {
               hidden={(this.props.drawerState === 'opened' && Platform.OS === 'ios') ? true : false}
               backgroundColor={statusBarColor.statusBarColor}
             />
-            <Spinner visible={this.state.loading} />
+
+            { this.state.headerApp.show && 
+            <Header>
+              <Left>
+                <Button transparent onPress={this.openDrawer.bind(this)}>
+                  <Icon name="ios-menu" />
+                </Button>
+              </Left>
+              <Body>
+                <Title>{this.state.headerApp.title}</Title>
+              </Body>
+              <Right />
+            </Header> }
+            
             <RouterWithRedux>
               <Scene key="root">
-                <Scene key="anatomy" component={Anatomy} hideNavBar initial={true} />
-                <Scene key="header1" component={Header1} />
-                <Scene key="header2" component={Header2} />
-                <Scene key="header3" component={Header3} />
-                <Scene key="header4" component={Header4} />
-                <Scene key="header5" component={Header5} />
-                <Scene key="header6" component={Header6} />
-                <Scene key="header7" component={Header7} />
-                <Scene key="header8" component={Header8} />
+                <Scene key="activitys" component={Activitys} hideNavBar initial={true} indexState={this.setStateContext}/>
                 <Scene key="footer" component={Footer} />
                 <Scene key="basicFooter" component={BasicFooter} />
                 <Scene key="iconFooter" component={IconFooter} />
@@ -319,7 +330,6 @@ class AppNavigator extends Component {
           </Drawer>
         </StyleProvider>
       );
-    }
   }
 }
 

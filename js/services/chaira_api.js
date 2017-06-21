@@ -1,5 +1,5 @@
 import ApiService from './api';
-import Oauth from '../providers/auth.storage';
+import OauthStorage from '../storages/auth.storage';
 
 class OauthService {
 
@@ -8,8 +8,12 @@ class OauthService {
     client_id = "800167840216";
     client_secret = "r3wd4q0x12gl4wowln6759vpl7gejy";
 
+    constructor(context){
+        this.apiService = new ApiService(context);  
+    }
+
     getAccessToken(code) {
-        return ApiService.POST('/oauth2/authorize.asmx/token', {
+        return this.apiService.POST('/oauth2/authorize.asmx/token', {
             grant_type: "authorization_code",
             code: code,
             redirect_uri: this.redirect_uri,
@@ -19,18 +23,20 @@ class OauthService {
         }, this.chaira_api);
     }
 
-    getScope(scope) {
-        Oauth.getAuth().then(data => {
+    async getScope(scope, callback) {
+        let context = this;
+        return OauthStorage.getAuth().then(data => {
             if (data != null) {
-                return ApiService.POST('/oauth2/resource.asmx/scope', {
+                return context.apiService.POST('/oauth2/resource.asmx/scope', {
                     access_token: data.access_token,
                     scope: scope
-                }, this.chaira_api);
+                }, context.chaira_api);
             } else {
-            	
+                console.warn("El usuario no esta logeado");
+            	return null;
             }
         });
     }
 }
 
-export default (new OauthService);
+export default (OauthService);

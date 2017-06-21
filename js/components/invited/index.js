@@ -7,8 +7,6 @@ import { openDrawer } from '../../actions/drawer';
 import LoginComponent from './login';
 import styles from './styles';
 
-import Oauth from '../../providers/auth.storage';
-
 class InvitedComponent extends Component { // eslint-disable-line
 
   render() {

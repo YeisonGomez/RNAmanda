@@ -1,15 +1,17 @@
 import { AsyncStorage } from 'react-native';
+import Auth from '../providers/auth';
 
-class Oauth {
+class OauthStorage {
 
 	db_id = '@db_auth:';
 
     async getAuth() {
         try {
-            let access_token = await AsyncStorage.getItem(this.db_id + 'access_token');
-            let refresh_token = await AsyncStorage.getItem(this.db_id + 'refresh_token');
-            if (access_token != null) {
-                return { access_token: access_token, refresh_token: refresh_token };
+            let auth = new Auth();
+            auth.access_token = await AsyncStorage.getItem(this.db_id + 'access_token');
+            auth.refresh_token = await AsyncStorage.getItem(this.db_id + 'refresh_token');
+            if (auth.access_token != null) {
+                return auth;
             } else {
             	return null;
             }
@@ -42,4 +44,4 @@ class Oauth {
     }
 }
 
-export default (new Oauth);
+export default (new OauthStorage);

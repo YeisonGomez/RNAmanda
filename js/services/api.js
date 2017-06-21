@@ -2,7 +2,12 @@ import Util from '../providers/util';
 
 class ApiService {
 
-    api_url = "https://jsonplaceholder.typicode.com";
+    api_url = "http://chaira.udla.edu.co/api_almacen/api/chaira-app";
+    context;
+
+    constructor(context) {
+        this.context = context;    
+    }
 
     GET(path, url) {
         url = (url) ? url : this.api_url;
@@ -12,7 +17,8 @@ class ApiService {
         });
     }
 
-    POST(path, params, url) {
+    POST(path, params, url) { 
+        this.context.props.indexState({ loading: true });
         url = (url) ? url : this.api_url;
         console.log(url + path);
         console.log(params);
@@ -20,16 +26,17 @@ class ApiService {
                 method: 'POST',
                 body: JSON.stringify(params)
             })
-            .then((response) => { return response.json(); })
-            .then((responseJson) => { return responseJson; })
+            .then((response) => { this.context.props.indexState({ loading: false }); return response.json(); })
+            .then((responseJson) => { this.context.props.indexState({ loading: false }); return responseJson; })
             .catch(this.handleError);;
     }
 
     handleError(error) {
         let description = "No es posible conectarse con el servidor";
         Util.notification(description,  'danger'); 
+        this.context.props.indexState({ loading: false });
         return { state: 'catch', description: description, debug: error };
     }
 }
 
-export default (new ApiService);
+export default (ApiService);

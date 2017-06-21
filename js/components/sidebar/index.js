@@ -16,17 +16,10 @@ const drawerImage = require('../../../img/logo-kitchen-sink.png');
 
 const datas = [
   {
-    name: 'Anatomy',
-    route: 'anatomy',
+    name: 'Actividades',
+    route: 'activitys',
     icon: 'phone-portrait',
     bg: '#C5F442',
-  },
-  {
-    name: 'Header',
-    route: 'header',
-    icon: 'phone-portrait',
-    bg: '#477EEA',
-    types: '8',
   },
   {
     name: 'Footer',
@@ -195,7 +188,7 @@ class SideBar extends Component {
           </Image>
           <List
             dataArray={datas} renderRow={data =>
-              <ListItem button noBorder onPress={() => { Actions[data.route](); this.props.closeDrawer() }} >
+              <ListItem button noBorder onPress={() => { Actions[data.route](); console.log(this.props); this.props.closeDrawer() }} >
                 <Left>
                   <Icon active name={data.icon} style={{ color: '#777', fontSize: 26, width: 30 }} />
                   <Text style={styles.text}>{data.name}</Text>

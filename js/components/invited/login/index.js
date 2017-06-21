@@ -4,13 +4,18 @@ import { connect } from 'react-redux';
 import { Content, Form, Button, Text, Header, Body, Title, Right, Toast } from 'native-base';
 
 import styles from './styles';
-import OauthService from '../../../services/chaira_api'; 
+import OauthService from '../../../services/chaira_api';
+
+import User from '../../../providers/user';
 import Util from '../../../providers/util';
-import User from '../../../providers/user.storage';
-import Oauth from '../../../providers/auth.storage';
+
+import UserStorage from '../../../storages/user.storage';
+import OauthStorage from '../../../storages/auth.storage';
 
 class LoginComponent extends Component { // eslint-disable-line
 
+    oauthService = new OauthService(this);
+    
     constructor(props){
       super(props);
       this.state = { 
@@ -23,13 +28,20 @@ class LoginComponent extends Component { // eslint-disable-line
     }
 
     callbackAPI(code){
-      OauthService.getAccessToken(code).then(data => {
+      this.oauthService.getAccessToken(code).then(data => {
         if(data && data.state != 'error'){
-          User.setUser(data.scope);
-          Oauth.setAuth(data);
+          OauthStorage.setAuth(data);
+
+          let user = new User();
+          user.parseUserScope(data.scope);
+          user.getProgram(this);
+
+          UserStorage.setUser(user);
+          //Guardarlo en la api Amanda
           this.props.indexState({ loading: false, module: 'app' });
         } else {
           Util.notification(data.description, 'danger');
+          this.props.indexState({ loading: false });
         }
       })
     }
@@ -66,8 +78,8 @@ class LoginComponent extends Component { // eslint-disable-line
               setModalVisible={this.setModalVisible.bind(this)}
               indexState={this.props.indexState.bind(this)}
               callbackAPI={this.callbackAPI.bind(this)}
-              redirect_uri={OauthService.redirect_uri}
-              source={{uri: OauthService.chaira_api + '/oauth2/authorize.asmx/auth?response_type=code&client_id=' + OauthService.client_id + '&redirect_uri=' + OauthService.redirect_uri + '&state=x'}}
+              redirect_uri={this.oauthService.redirect_uri}
+              source={{uri: this.oauthService.chaira_api + '/oauth2/authorize.asmx/auth?response_type=code&client_id=' + this.oauthService.client_id + '&redirect_uri=' + this.oauthService.redirect_uri + '&state=x'}}
             />
           </Modal>
 
