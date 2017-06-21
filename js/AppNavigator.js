@@ -205,6 +205,7 @@ class AppNavigator extends Component {
               backgroundColor={statusBarColor.statusBarColor}
             />
 
+          <Spinner visible={this.state.loading} />
 
           <Header>
             <Body>
@@ -235,6 +236,7 @@ class AppNavigator extends Component {
               hidden={(this.props.drawerState === 'opened' && Platform.OS === 'ios') ? true : false}
               backgroundColor={statusBarColor.statusBarColor}
             />
+            <Spinner visible={this.state.loading} />
 
             { this.state.headerApp.show && 
             <Header>

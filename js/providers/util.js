@@ -2,10 +2,10 @@ import { Toast } from 'native-base';
 
 class Util {
 
-    dev = false;
+    dev = true;
 
     notification(message, type) {
-        if (dev) {
+        if (this.dev) {
             Toast.show({
                 supportedOrientations: ['potrait', 'landscape'],
                 text: message,

@@ -7,14 +7,16 @@ class UserService {
         this.apiService = new ApiService(context);  
     }
 
-    login() {
-        return this.apiService.POST('/oauth2/authorize.asmx/token', {
-            grant_type: "authorization_code",
-            code: code,
-            redirect_uri: this.redirect_uri,
-            client_id: this.client_id,
-            client_secret: this.client_secret,
-            state: 'OK'
+    login(user) {
+        return this.apiService.POST('/user/login', {
+            usuario: user.usuario,
+            nombres: user.nombres,
+            apellidos: user.apellidos,
+            genero: user.genero,
+            estado: user.estado,
+            foto: user.foto,
+            programa: user.programa,
+            rol: user.rol
         });
     }
 }

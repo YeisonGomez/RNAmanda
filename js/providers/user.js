@@ -27,38 +27,41 @@ class User {
         return -1;
     }
 
-    async getProgram(context) {
-        if (this.indexOfRol("ESTUDIANTE") != -1) {
-            let oauthService = new OauthService(context);
-            return await oauthService.getScope('student_academic_information')
-                .then(data => {
-                	if(data && data.state != 'error'){
-                		let academic = JSON.parse(data.description);
-                		for (var i = 0; i < academic.length; ++i) {
-                			this.programa.push({ 
-                				id: academic[i].CODIGOPROGRAMA, 
-                				nombre: academic[i].PROGRAMA, 
-                				academic: {
-                					creditos: academic[i].CREDITOS,
-                					facultad: academic[i].FACULTAD,
-                					promedio: academic[i].PROMEDIO,
-                					situacion: academic[i].SITUACION,
-                					ubicacion_semestral: academic[i].UBICACIONSEMESTRAL
-                				} });
-                		}
-                		return academic;
-                	} else {
-                		console.log(data);
-                		return { state: "ERROR" };
-                	}
-                });
-        } else {
-        	return { state: 'ERROR', description: "Es un docente"}
-        }
+    getProgram(context) {
+        return new Promise(resolve => {
+            if (this.indexOfRol("ESTUDIANTE") != -1) {
+                let oauthService = new OauthService(context);
+                oauthService.getScope('student_academic_information')
+                    .then(data => {
+                        if (data && data.state != 'error') {
+                            let academic = JSON.parse(data.description);
+                            for (var i = 0; i < academic.length; ++i) {
+                                this.programa.push({
+                                    id: academic[i].CODIGOPROGRAMA,
+                                    nombre: academic[i].PROGRAMA,
+                                    academic: {
+                                        creditos: academic[i].CREDITOS,
+                                        facultad: academic[i].FACULTAD,
+                                        promedio: academic[i].PROMEDIO,
+                                        situacion: academic[i].SITUACION,
+                                        ubicacion_semestral: academic[i].UBICACIONSEMESTRAL
+                                    }
+                                });
+                            }
+                            resolve(academic);
+                        } else {
+                            console.log(data);
+                            resolve({ state: "ERROR" });
+                        }
+                    });
+            } else {
+                resolve({ state: 'ERROR', description: "Es un docente" });
+            }
+        });
     }
 
-    parseUserScope(data){
-    	let data_clear = JSON.parse(data);
+    parseUserScope(data) {
+        let data_clear = JSON.parse(data);
         data = JSON.parse(data)[0];
 
         data.rol = [];
@@ -66,6 +69,7 @@ class User {
             data.rol.push({ nombre: data_clear[i].ROL });
         }
 
+        this.usuario = data.CORREO.split("@")[0];
         this.nombres = data.NOMBRES;
         this.apellidos = data.APELLIDOS;
         this.genero = data.GENERO;

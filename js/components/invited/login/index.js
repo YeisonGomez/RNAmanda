@@ -5,6 +5,7 @@ import { Content, Form, Button, Text, Header, Body, Title, Right, Toast } from '
 
 import styles from './styles';
 import OauthService from '../../../services/chaira_api';
+import UserService from '../../../services/user.service';
 
 import User from '../../../providers/user';
 import Util from '../../../providers/util';
@@ -15,7 +16,9 @@ import OauthStorage from '../../../storages/auth.storage';
 class LoginComponent extends Component { // eslint-disable-line
 
     oauthService = new OauthService(this);
-    
+    userService = new UserService(this);
+    user = new User();
+
     constructor(props){
       super(props);
       this.state = { 
@@ -32,23 +35,22 @@ class LoginComponent extends Component { // eslint-disable-line
         if(data && data.state != 'error'){
           OauthStorage.setAuth(data);
 
-          let user = new User();
-          user.parseUserScope(data.scope);
-          user.getProgram(this);
-
-          UserStorage.setUser(user);
-          //Guardarlo en la api Amanda
-          this.props.indexState({ loading: false, module: 'app' });
-        } else {
+          this.user.parseUserScope(data.scope);
+          this.user.getProgram(this).then(data2 => {
+            UserStorage.setUser(this.user);
+            this.userService.login(this.user).then(data3 => {
+              console.log(data3);
+              //this.props.indexState({ module: 'app' });
+            });
+          });
+        } else if(data != undefined){
           Util.notification(data.description, 'danger');
-          this.props.indexState({ loading: false });
         }
       })
     }
  
     onNavigationStateChange(e){ 
       if(e.url.indexOf(this.redirect_uri) != -1 && e.url.indexOf("http://chaira.udla.edu.co") == -1){
-        this.indexState({ loading: true });
         let code = "";
         let vars = e.url.split("?")[1].split("&");
         for (let i = 0; i < vars.length; i++) {
