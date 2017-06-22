@@ -37,10 +37,11 @@ class LoginComponent extends Component { // eslint-disable-line
 
           this.user.parseUserScope(data.scope);
           this.user.getProgram(this).then(data2 => {
-            UserStorage.setUser(this.user);
             this.userService.login(this.user).then(data3 => {
-              console.log(data3);
-              //this.props.indexState({ module: 'app' });
+              this.user.token = data3.token;
+
+              //Guardar usuario en local
+              UserStorage.setUser(this.user).then(() => this.props.indexState({ module: 'app' }));
             });
           });
         } else if(data != undefined){

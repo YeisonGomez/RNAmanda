@@ -128,7 +128,7 @@ class AppNavigator extends Component {
       headerApp: { show: true, title: '' }
     }
 
-    OauthStorage.clearAll();
+    //OauthStorage.clearAll();
     OauthStorage.isAuth().then(data => {
       let nav = (data)? 'app': 'invited';
       this.setState({module: nav}); 
@@ -236,6 +236,7 @@ class AppNavigator extends Component {
               hidden={(this.props.drawerState === 'opened' && Platform.OS === 'ios') ? true : false}
               backgroundColor={statusBarColor.statusBarColor}
             />
+
             <Spinner visible={this.state.loading} />
 
             { this.state.headerApp.show && 

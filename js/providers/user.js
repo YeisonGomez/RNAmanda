@@ -3,6 +3,8 @@ import OauthService from '../services/chaira_api';
 import UserStorage from '../storages/user.storage';
 
 class User {
+
+    token;
     usuario;
     nombres;
     apellidos;

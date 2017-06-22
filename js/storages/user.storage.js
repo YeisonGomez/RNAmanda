@@ -11,6 +11,7 @@ class UserStorage {
             user.nombres = await AsyncStorage.getItem(this.db_id + 'NOMBRES');
             if (user.nombres != null) {
                 
+                user.token = await AsyncStorage.getItem(this.db_id + 'TOKEN');
                 user.apellidos = await AsyncStorage.getItem(this.db_id + 'APELLIDOS');
                 user.genero = await AsyncStorage.getItem(this.db_id + 'GENERO');
                 user.RH = await AsyncStorage.getItem(this.db_id + 'RH');
@@ -29,12 +30,14 @@ class UserStorage {
             	return null;
             }
         } catch (error) {
+            console.log(error);
             return null;
         }
     }
 
     async setUser(data) {
         try {
+            await AsyncStorage.setItem(this.db_id + 'TOKEN', data.token);
             await AsyncStorage.setItem(this.db_id + 'NOMBRES', data.nombres);
             await AsyncStorage.setItem(this.db_id + 'APELLIDOS', data.apellidos);
             await AsyncStorage.setItem(this.db_id + 'GENERO', data.genero);

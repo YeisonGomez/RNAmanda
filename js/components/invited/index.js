@@ -13,7 +13,6 @@ class InvitedComponent extends Component { // eslint-disable-line
     return ( 
       <Container> 
         <View>
-          <LoginComponent/>
         </View>
       </Container>
     );
