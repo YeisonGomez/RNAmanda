@@ -22,6 +22,12 @@ const datas = [
     bg: '#C5F442',
   },
   {
+    name: 'Grupos',
+    route: 'groups',
+    icon: 'phone-portrait',
+    bg: '#C5F442',
+  },
+  {
     name: 'Footer',
     route: 'footer',
     icon: 'phone-portrait',
@@ -119,12 +125,6 @@ const datas = [
     bg: '#AB6AED',
   },
   {
-    name: 'Spinner',
-    route: 'spinner',
-    icon: 'navigate',
-    bg: '#BE6F50',
-  },
-  {
     name: 'Tabs',
     route: 'tab',
     icon: 'home',
@@ -136,12 +136,6 @@ const datas = [
     route: 'thumbnail',
     icon: 'image',
     bg: '#cc0000',
-  },
-  {
-    name: 'Toast',
-    route: 'toast',
-    icon: 'albums',
-    bg: '#C5F442',
   },
   {
     name: 'Typography',

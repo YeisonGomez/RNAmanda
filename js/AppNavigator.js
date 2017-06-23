@@ -15,6 +15,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import InvitedComponent from './components/invited/';
 import LoginComponent from './components/invited/login/';
 import Activitys from './components/activitys/';
+import Groups from './components/groups/';
 import Footer from './components/footer/';
 import BasicFooter from './components/footer/basicFooter';
 import IconFooter from './components/footer/iconFooter';
@@ -77,7 +78,6 @@ import NHListAvatar from './components/list/list-avatar';
 import NHListThumbnail from './components/list/list-thumbnail';
 import NHRadio from './components/radio/';
 import NHSearchbar from './components/searchbar/';
-import NHSpinner from './components/spinner/';
 import NHPicker from './components/picker/';
 import NHTab from './components/tab/';
 import BasicTab from './components/tab/basicTab';
@@ -89,7 +89,6 @@ import SideBar from './components/sidebar';
 import Segment from './components/segment';
 import BasicSegment from './components/segment/SegmentHeader';
 import AdvSegment from './components/segment/segmentTab';
-import Toast from './components/toast';
 import statusBarColor from './themes/variables';
 
 import OauthStorage from './storages/auth.storage';
@@ -132,7 +131,7 @@ class AppNavigator extends Component {
     OauthStorage.isAuth().then(data => {
       let nav = (data)? 'app': 'invited';
       this.setState({module: nav}); 
-      //Actions[nav]();
+      //Actions[nav](); 
     });
   }
 
@@ -255,6 +254,7 @@ class AppNavigator extends Component {
             <RouterWithRedux>
               <Scene key="root">
                 <Scene key="activitys" component={Activitys} hideNavBar initial={true} indexState={this.setStateContext}/>
+                <Scene key="groups" component={Groups} indexState={this.setStateContext}/>
                 <Scene key="footer" component={Footer} />
                 <Scene key="basicFooter" component={BasicFooter} />
                 <Scene key="iconFooter" component={IconFooter} />
@@ -318,7 +318,6 @@ class AppNavigator extends Component {
                 <Scene key="picker" component={NHPicker} />
                 <Scene key="radio" component={NHRadio} />
                 <Scene key="searchbar" component={NHSearchbar} />
-                <Scene key="spinner" component={NHSpinner} />
                 <Scene key="tab" component={NHTab} />
                 <Scene key="basicTab" component={BasicTab} />
                 <Scene key="configTab" component={ConfigTab} />
@@ -327,7 +326,6 @@ class AppNavigator extends Component {
                 <Scene key="segment" component={Segment} />
                 <Scene key="basicSeg" component={BasicSegment} />
                 <Scene key="advSeg" component={AdvSegment} />
-                <Scene key="toast" component={Toast} />
               </Scene>
             </RouterWithRedux>
           </Drawer>

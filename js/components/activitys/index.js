@@ -27,7 +27,6 @@ class Activitys extends Component {
   oauthService = new OauthService();
   activityService = new ActivityService();
   user = new User();
-  activitys = [];
 
   constructor(props){
     super(props);
@@ -61,7 +60,7 @@ class Activitys extends Component {
         //consultar chaira horario segun ROLES, 
         //Guardan en local, en Amanda y renderizar
         this.setState({ downloadSchedule: true });
-        this.activityService.getActivitysChaira(this.user, this.oauthService)
+        this.activityService.getActivitysChaira(this.user)
         .then(data => {
           if(data.state == 'OK'){
             this.setState({ activitys: data.description });

@@ -5,6 +5,7 @@ class Util {
     dev = true;
 
     notification(message, type) {
+        //danger,success,warning    
         if (this.dev) {
             Toast.show({
                 supportedOrientations: ['potrait', 'landscape'],
