@@ -8,8 +8,8 @@ class OauthService {
     client_id = "800167840216";
     client_secret = "r3wd4q0x12gl4wowln6759vpl7gejy";
 
-    constructor(context){
-        this.apiService = new ApiService(context);  
+    constructor(){
+        this.apiService = new ApiService();  
     }
 
     getAccessToken(code) {

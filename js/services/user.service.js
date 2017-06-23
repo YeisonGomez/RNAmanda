@@ -3,8 +3,8 @@ import OauthStorage from '../storages/auth.storage';
 
 class UserService {
 
-    constructor(context){
-        this.apiService = new ApiService(context);  
+    constructor(){
+        this.apiService = new ApiService();  
     }
 
     login(user) {

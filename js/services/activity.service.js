@@ -1,23 +1,26 @@
 import ApiService from './api';
+import Activity from '../providers/activity';
+import OauthService from '../services/chaira_api';
 
 class ActivityService {
 
-    constructor(context) {
-        this.apiService = new ApiService(context);
+	oauthService = new OauthService();
+
+    constructor() {
+        this.apiService = new ApiService();
     }
 
-    addActivitysAll(activitys, i) {
+    addActivitysAll(activitys, i, resolve_final) {
         return new Promise(resolve => {
             if (i == activitys.length) {
-                resolve({ state: 'OK' });
+                resolve_final({ state: 'OK' });
             } else {
                 console.log("REGISTRANDO...");
-                console.log(activitys[i]);
                 this.apiService.POST('/activity/add', activitys[i])
                     .then(data => {
-                        console.log(data);
+                    	console.log(data);
                         if (data && data[0].ESTADO == 'OK') {
-                            this.addActivitysAll(activitys, i + 1);
+                            this.addActivitysAll(activitys, i + 1, resolve);
                         }
                     });
             }
@@ -28,20 +31,20 @@ class ActivityService {
         return this.apiService.GET('/activity/user/get-activitys');
     }
 
-    getActivitysChaira(user, oauthService) {
-        return new Promise(resolve => {
+    getActivitysChaira(user) {
+        return new Promise(resolve2 => {
             if (user.indexOfRol("ESTUDIANTE") != -1) {
-                oauthService.getScope('schedule')
+                this.oauthService.getScope('schedule')
                     .then((data) => {
-                        if (false && data.state == 'OK') {
+                        if (data.state == 'OK') {
                             let activitys = Activity.parserScheduleToActivity(data.description, user);
                             this.addActivitysAll(activitys, 0)
                                 .then(data => {
-                                    console.log(data);
+                                	console.log("hola");
+                                    resolve2({ state: 'OK' });
                                 });
                         } else {
-                            //Validar si no tiene materias
-                            console.log(data);
+                            resolve2({ state: 'ERROR', description: 'El usuario no tiene materias actualmente' });
                         }
                     });
             }

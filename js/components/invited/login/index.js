@@ -15,8 +15,8 @@ import OauthStorage from '../../../storages/auth.storage';
 
 class LoginComponent extends Component { // eslint-disable-line
 
-    oauthService = new OauthService(this);
-    userService = new UserService(this);
+    oauthService = new OauthService();
+    userService = new UserService();
     user = new User();
 
     constructor(props){

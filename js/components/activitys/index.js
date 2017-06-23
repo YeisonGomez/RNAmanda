@@ -21,8 +21,8 @@ class Activitys extends Component {
     openDrawer: React.PropTypes.func,
   }
 
-  oauthService = new OauthService(this);
-  activityService = new ActivityService(this);
+  oauthService = new OauthService();
+  activityService = new ActivityService();
   user = new User();
   activitys = [];
 
@@ -42,16 +42,23 @@ class Activitys extends Component {
   }
 
   componentWillMount(){ 
-    this.props.indexState({ headerApp: { show: true, title: 'Actividades' } });
+    this.props.indexState({ loading: true, headerApp: { show: true, title: 'Actividades' } });
   }
 
   getActivitys(user){
     this.activityService.getActivitys()
     .then(data => {
-      this.setState({ activitys: data });
-      //this.activitys = data;
+      this.props.indexState({ loading: false });
       console.log(data);
-
+      if(data && data.length > 0){
+        this.setState({ activitys: data });
+      } else {
+        //Modal obteniendo materias
+        this.activityService.getActivitysChaira(this.user, this.oauthService)
+        .then(data => {
+           console.log(data);
+        });
+      }
     });
     //Consultar api Amanda
     //Si existen:
@@ -61,24 +68,6 @@ class Activitys extends Component {
       //Si existe: Guardan en local, en Amanda y renderizar
       //else: "No tiene materias"
       //catch: "Error en la api"
-      /*if(this.user.indexOfRol("ESTUDIANTE") != -1){
-        this.oauthService.getScope('schedule')
-        .then((data) => {
-          if(false && data.state == 'OK'){
-            this.activitys = Activity.parserScheduleToActivity(data.description, this.user);
-            this.activityService.addActivitysAll(this.activitys, 0)
-            .then(data =>{
-              console.log(data);
-            });
-          } else {
-            //Validar si no tiene materias
-            console.log(data);
-          }
-        });
-      }
-      if(this.user.indexOfRol("FUNCIONARIO") != -1){
-        console.log("docente");
-      }*/
   }
 
   render() {
