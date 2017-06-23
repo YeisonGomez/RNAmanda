@@ -4,27 +4,23 @@ import OauthService from '../services/chaira_api';
 
 class ActivityService {
 
-	oauthService = new OauthService();
+    oauthService = new OauthService();
 
     constructor() {
         this.apiService = new ApiService();
     }
 
     addActivitysAll(activitys, i, resolve_final) {
-        return new Promise(resolve => {
-            if (i == activitys.length) {
-                resolve_final({ state: 'OK' });
-            } else {
-                console.log("REGISTRANDO...");
-                this.apiService.POST('/activity/add', activitys[i])
-                    .then(data => {
-                    	console.log(data);
-                        if (data && data[0].ESTADO == 'OK') {
-                            this.addActivitysAll(activitys, i + 1, resolve);
-                        }
-                    });
-            }
-        });
+        if (i == activitys.length) {
+            resolve_final({ state: 'OK', description: activitys });
+        } else {
+            this.apiService.POST('/activity/add', activitys[i])
+                .then(data => {
+                    if (data && data[0].ESTADO == 'OK') {
+                        this.addActivitysAll(activitys, i + 1, resolve_final);
+                    }
+                });
+        }
     }
 
     getActivitys() {
@@ -38,11 +34,7 @@ class ActivityService {
                     .then((data) => {
                         if (data.state == 'OK') {
                             let activitys = Activity.parserScheduleToActivity(data.description, user);
-                            this.addActivitysAll(activitys, 0)
-                                .then(data => {
-                                	console.log("hola");
-                                    resolve2({ state: 'OK' });
-                                });
+                            this.addActivitysAll(activitys, 0, resolve2);
                         } else {
                             resolve2({ state: 'ERROR', description: 'El usuario no tiene materias actualmente' });
                         }

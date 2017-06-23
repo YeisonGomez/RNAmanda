@@ -31,6 +31,7 @@ class LoginComponent extends Component { // eslint-disable-line
     }
 
     callbackAPI(code){
+      this.props.indexState({ loading: true });
       this.oauthService.getAccessToken(code).then(data => {
         if(data && data.state != 'error'){
           OauthStorage.setAuth(data);
